@@ -1,8 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
 .fullpage {
-    width: 100%
+    width: 100%;
+    line-height: 1;
+    font-family: 'work-sans';
 }
 
 .header {
     text-align: center;
-    background-image: linear-gradient(blue, purple);
+    background-image: linear-gradient(to right, rgb(47, 47, 187), rgb(51, 8, 51));
+    color: white;
+}
+
+.city-input {
+    text-align: center;
 }
