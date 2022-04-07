@@ -1,0 +1,8 @@
+.fullpage {
+    width: 100%
+}
+
+.header {
+    text-align: center;
+    background-image: linear-gradient(blue, purple);
+}
