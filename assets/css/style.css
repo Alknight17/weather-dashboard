@@ -17,3 +17,7 @@
 .city-input {
     text-align: center;
 }
+
+.hide {
+    display: none;
+}
