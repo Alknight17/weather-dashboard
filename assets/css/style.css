@@ -2,11 +2,6 @@
     box-sizing: border-box;
 }
 
-.fullpage {
-    width: 100%;
-    line-height: 1;
-    font-family: 'work-sans';
-}
 
 .header {
     text-align: center;
@@ -14,10 +9,42 @@
     color: white;
 }
 
-.city-input {
-    text-align: center;
+.forecast-cards {
+    background-image:rgb(47, 47, 187)
 }
 
-.hide {
-    display: none;
+#city-list {
+    width:22rem;
+}
+
+#city-date-icon,
+#city-name,
+#current-icon {
+    display: flex;
+    flex-direction:row;
+    justify-content: center/space-around/space-between;
+}
+
+.forecast {
+    margin: 10px;
+    background-image:rgb(47, 47, 187);
+}
+
+#forecast-cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: center/space-between;
+}
+
+input {
+    width: 75%
+}
+
+.current-weather {
+    display: flex;
+    flex-direction: row;
+}
+
+h4 {
+    margin: 5px;
 }

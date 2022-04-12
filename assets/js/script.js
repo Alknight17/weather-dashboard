@@ -1,4 +1,6 @@
-function createCityList(citySearchList) {
+
+// create function that receives city search input, and turns searched cities into clickable buttons
+function cityList(citySearchList) {
     $("#city-list").empty();
   
     var keys = Object.keys(citySearchList);
@@ -8,62 +10,56 @@ function createCityList(citySearchList) {
   
       var splitStr = keys[i].toLowerCase().split(" ");
       for (var j = 0; j < splitStr.length; j++) {
-        splitStr[j] =
-          splitStr[j].charAt(0).toUpperCase() + splitStr[j].substring(1);
+        splitStr[j] = splitStr[j].charAt(0).toUpperCase() + splitStr[j].substring(1);
       }
+
       var titleCasedCity = splitStr.join(" ");
       cityListEntry.text(titleCasedCity);
   
       $("#city-list").append(cityListEntry);
     }
   }
+
+  // global variable for API key
+  var apiKey = "6b388d2d923733b00f9b381eb173ff19"
   
-  function populateCityWeather(city, citySearchList) {
-    createCityList(citySearchList);
+  // create function to search for city and extract api data
+  function CityWeather(city, citySearchList) {
+    cityList(citySearchList);
   
-    var queryURL =
-      "https://api.openweathermap.org/data/2.5/weather?&units=imperial&appid=885e9149105e8901c9809ac018ce8658&q=" +
-      city;
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey;
   
-    var queryURL2 =
-      "https://api.openweathermap.org/data/2.5/forecast?&units=imperial&appid=885e9149105e8901c9809ac018ce8658&q=" +
-      city;
+    var queryURL2 = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey;
   
+    // define lat/lon as variables to use in weather api
     var latitude;
-  
     var longitude;
   
     $.ajax({
       url: queryURL,
       method: "GET"
     })
-      // Store all of the retrieved data inside of an object called "weather"
+
+      // create an object called weather to store api data
       .then(function(weather) {
-        // Log the queryURL
-        console.log(queryURL);
-  
-        // Log the resulting object
-        console.log(weather);
   
         var nowMoment = moment();
   
         var displayMoment = $("<h3>");
         $("#city-name").empty();
-        $("#city-name").append(
-          displayMoment.text("(" + nowMoment.format("M/D/YYYY") + ")")
-        );
+        $("#city-name").append(displayMoment.text("(" + nowMoment.format("M/D/YYYY") + ")"));
   
         var cityName = $("<h3>").text(weather.name);
         $("#city-name").prepend(cityName);
   
         var weatherIcon = $("<img>");
-        weatherIcon.attr(
-          "src",
-          "https://openweathermap.org/img/w/" + weather.weather[0].icon + ".png"
-        );
+        weatherIcon.attr("src", "https://openweathermap.org/img/w/" + weather.weather[0].icon + ".png");
+
+        // use jquery to pull icons from weather api
         $("#current-icon").empty();
         $("#current-icon").append(weatherIcon);
   
+        // use jquery to pull various weather statuses 
         $("#current-temp").text("Temperature: " + weather.main.temp + " °F");
         $("#current-humidity").text("Humidity: " + weather.main.humidity + "%");
         $("#current-wind").text("Wind Speed: " + weather.wind.speed + " MPH");
@@ -72,11 +68,7 @@ function createCityList(citySearchList) {
         longitude = weather.coord.lon;
   
         var queryURL3 =
-          "https://api.openweathermap.org/data/2.5/uvi/forecast?&units=imperial&appid=885e9149105e8901c9809ac018ce8658&q=" +
-          "&lat=" +
-          latitude +
-          "&lon=" +
-          longitude;
+        "https://api.openweathermap.org/data/2.5/uvi/forecast?q=" + city + "&appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude;
   
         $.ajax({
           url: queryURL3,
@@ -109,9 +101,7 @@ function createCityList(citySearchList) {
               console.log("#forecast-date" + forecastPosition);
   
               $("#forecast-date" + forecastPosition).empty();
-              $("#forecast-date" + forecastPosition).append(
-                forecastDate.text(nowMoment.add(1, "days").format("M/D/YYYY"))
-              );
+              $("#forecast-date" + forecastPosition).append(forecastDate.text(nowMoment.add(1, "days").format("M/D/YYYY")));
   
               var forecastIcon = $("<img>");
               forecastIcon.attr(
@@ -124,19 +114,13 @@ function createCityList(citySearchList) {
               $("#forecast-icon" + forecastPosition).empty();
               $("#forecast-icon" + forecastPosition).append(forecastIcon);
   
-              console.log(forecast.list[i].weather[0].icon);
+              $("#forecast-temp" + forecastPosition).text("Temp: " + forecast.list[i].main.temp + " °F");
+
+              $("#forecast-humidity" + forecastPosition).text("Humidity: " + forecast.list[i].main.humidity + "%");
+
+
+              $("#forecast-wind" + forecastPosition).text("Wind: " + forecast.list[i].wind.speed + " MPH");
   
-              $("#forecast-temp" + forecastPosition).text(
-                "Temp: " + forecast.list[i].main.temp + " °F"
-              );
-              $("#forecast-humidity" + forecastPosition).text(
-                "Humidity: " + forecast.list[i].main.humidity + "%"
-              );
-  
-              $(".forecast").attr(
-                "style",
-                "background-color:dodgerblue; color:white"
-              );
             }
           });
         });
@@ -152,7 +136,7 @@ function createCityList(citySearchList) {
       citySearchList = {};
     }
   
-    createCityList(citySearchList);
+    cityList(citySearchList);
   
     $("#current-weather").hide();
     $("#forecast-weather").hide();
@@ -167,12 +151,11 @@ function createCityList(citySearchList) {
         .toLowerCase();
   
       if (city != "") {
-        //Check to see if there is any text entered
       
-        citySearchList[city] = true;
+      citySearchList[city] = true;
       localStorage.setItem("citySearchList", JSON.stringify(citySearchList));
   
-      populateCityWeather(city, citySearchList);
+      CityWeather(city, citySearchList);
   
       $("#current-weather").show();
       $("#forecast-weather").show();
@@ -185,7 +168,7 @@ function createCityList(citySearchList) {
       event.preventDefault();
       var city = $(this).text();
   
-      populateCityWeather(city, citySearchList);
+      CityWeather(city, citySearchList);
   
       $("#current-weather").show();
       $("#forecast-weather").show();
