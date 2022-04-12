@@ -73,7 +73,8 @@ function cityList(citySearchList) {
         $.ajax({
           url: queryURL3,
           method: "GET"
-          // Store all of the retrieved data inside of an object called "uvIndex"
+
+        // Create object called UVIndex and store data inside it
         }).then(function(uvIndex) {
           console.log(uvIndex);
   
@@ -87,83 +88,73 @@ function cityList(citySearchList) {
           $.ajax({
             url: queryURL2,
             method: "GET"
-            // Store all of the retrieved data inside of an object called "forecast"
+
+            // create object called forecast and store data inside it
           }).then(function(forecast) {
             console.log(queryURL2);
   
             console.log(forecast);
-            // Loop through the forecast list array and display a single forecast entry/time (5th entry of each day which is close to the highest temp/time of the day) from each of the 5 days
+            // Loop through the forecast for each of the five days 
             for (var i = 6; i < forecast.list.length; i += 8) {
               var forecastDate = $("<h5>");
-  
               var forecastPosition = (i + 2) / 8;
-  
-              console.log("#forecast-date" + forecastPosition);
   
               $("#forecast-date" + forecastPosition).empty();
               $("#forecast-date" + forecastPosition).append(forecastDate.text(nowMoment.add(1, "days").format("M/D/YYYY")));
   
               var forecastIcon = $("<img>");
-              forecastIcon.attr(
-                "src",
-                "https://openweathermap.org/img/w/" +
-                  forecast.list[i].weather[0].icon +
-                  ".png"
-              );
+              forecastIcon.attr("src", "https://openweathermap.org/img/w/" + forecast.list[i].weather[0].icon + ".png");
   
               $("#forecast-icon" + forecastPosition).empty();
               $("#forecast-icon" + forecastPosition).append(forecastIcon);
   
               $("#forecast-temp" + forecastPosition).text("Temp: " + forecast.list[i].main.temp + " °F");
-
               $("#forecast-humidity" + forecastPosition).text("Humidity: " + forecast.list[i].main.humidity + "%");
-
-
               $("#forecast-wind" + forecastPosition).text("Wind: " + forecast.list[i].wind.speed + " MPH");
-  
             }
           });
         });
       });
   }
   
+  
   $(document).ready(function() {
-    var citySearchListStringified = localStorage.getItem("citySearchList");
+    // take city string and parse it back into an object  
+    var cityString = localStorage.getItem("citySearchList");
+    var citySearchList = JSON.parse(cityString);
   
-    var citySearchList = JSON.parse(citySearchListStringified);
-  
+    // create array for empty search list
     if (citySearchList == null) {
       citySearchList = {};
     }
   
+    // recall earlier function to look through city input field
     cityList(citySearchList);
   
+    // reset weather and forecast values 
     $("#current-weather").hide();
     $("#forecast-weather").hide();
-  
-  
-  
+
+    // upon clicking search, take input value and convert to lower case/trim spaces
     $("#search-button").on("click", function(event) {
       event.preventDefault();
-      var city = $("#city-input")
-        .val()
-        .trim()
-        .toLowerCase();
+      var city = $("#city-input").val().trim().toLowerCase();
   
       if (city != "") {
       
+      // if city is entered, convert to string and save to local storage
       citySearchList[city] = true;
       localStorage.setItem("citySearchList", JSON.stringify(citySearchList));
   
       CityWeather(city, citySearchList);
-  
+      
+      // show weather results for newly searched city
       $("#current-weather").show();
       $("#forecast-weather").show();
       }
-  
-      
     });
-  
+    
+    // show weather for city in history list when clicked
     $("#city-list").on("click", "button", function(event) {
       event.preventDefault();
       var city = $(this).text();
